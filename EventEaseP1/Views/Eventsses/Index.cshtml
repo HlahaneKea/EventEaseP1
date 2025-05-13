@@ -1,0 +1,58 @@
+﻿@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Success"]
+    </div>
+}
+
+@model IEnumerable<EventEaseP1.Models.Eventss>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Events</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New Event</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Image</th>
+            <th>Event Name</th>
+            <th>Event Date</th>
+            <th>Description</th>
+            <th>Venue</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @if (!string.IsNullOrEmpty(item.ImageUrl))
+                    {
+                        <img src="@item.ImageUrl" alt="@item.Name" style="height: 50px; width: 50px; object-fit: cover;" />
+                    }
+                </td>
+                <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                <td>@Html.DisplayFor(modelItem => item.EventDate)</td>
+                <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                <td>@Html.DisplayFor(modelItem => item.Venue.Name)</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.EventId" class="btn btn-primary btn-sm">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.EventId" class="btn btn-info btn-sm">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.EventId" class="btn btn-danger btn-sm">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

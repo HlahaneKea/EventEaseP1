@@ -1,0 +1,118 @@
+﻿@model EventEaseP1.Models.Booking
+
+@{
+    ViewData["Title"] = "Create Booking";
+}
+
+<h1>Create Booking</h1>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <ul>
+            @foreach (var modelState in ViewData.ModelState.Values)
+            {
+                foreach (var error in modelState.Errors)
+                {
+                    <li>@error.ErrorMessage</li>
+                }
+            }
+        </ul>
+    </div>
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create" method="post" id="bookingForm">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group mb-3">
+                <label for="UserId" class="control-label">User ID</label>
+                <input type="number" name="UserId" id="UserId" class="form-control" required min="1" />
+                <span class="text-danger" data-valmsg-for="UserId"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="EventId" class="control-label">Event</label>
+                <select name="EventId" id="EventId" class="form-control" required>
+                    <option value="">-- Select Event --</option>
+                    @if (ViewBag.EventId != null)
+                    {
+                        foreach (var item in ViewBag.EventId)
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+                    }
+                </select>
+                <span class="text-danger" data-valmsg-for="EventId"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="BookingDate" class="control-label">Booking Date</label>
+                <input type="date" name="BookingDate" id="BookingDate" class="form-control" required />
+                <span class="text-danger" data-valmsg-for="BookingDate"></span>
+                <small class="form-text text-muted">Booking date must match the event date</small>
+            </div>
+
+            <input type="hidden" name="VenueId" id="VenueId" required />
+
+            <div class="form-group mb-3">
+                <label class="control-label">Selected Venue</label>
+                <input type="text" id="VenueDisplay" class="form-control" readonly />
+                <span class="text-danger" data-valmsg-for="VenueId"></span>
+            </div>
+
+            <div class="form-group mt-4">
+                <button type="submit" class="btn btn-primary">Create</button>
+                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Store event details in JavaScript
+        const eventDetails = @Html.Raw(Json.Serialize(ViewBag.EventDetails));
+
+        document.getElementById('EventId').addEventListener('change', function() {
+            const eventId = parseInt(this.value);
+            const venueDisplay = document.getElementById('VenueDisplay');
+            const venueId = document.getElementById('VenueId');
+            const bookingDate = document.getElementById('BookingDate');
+
+            if (!eventId) {
+                clearFields();
+                return;
+            }
+
+            // Find the selected event details
+            const selectedEvent = eventDetails.find(e => e.eventId === eventId);
+            if (selectedEvent) {
+                venueId.value = selectedEvent.venueId;
+                venueDisplay.value = selectedEvent.venueName;
+                bookingDate.value = selectedEvent.eventDate;
+            } else {
+                clearFields();
+            }
+        });
+
+        function clearFields() {
+            document.getElementById('VenueId').value = '';
+            document.getElementById('VenueDisplay').value = '';
+            document.getElementById('BookingDate').value = '';
+        }
+
+        // Prevent form submission if venue isn't loaded
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            const venueId = document.getElementById('VenueId').value;
+            const eventId = document.getElementById('EventId').value;
+
+            if (!eventId || !venueId) {
+                e.preventDefault();
+                alert('Please select an event first');
+                return false;
+            }
+        });
+    </script>
+}

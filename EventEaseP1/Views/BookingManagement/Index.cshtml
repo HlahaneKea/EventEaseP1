@@ -1,0 +1,107 @@
+﻿@model IEnumerable<EventEaseP1.Models.BookingDetails>
+
+@{
+    ViewData["Title"] = "Booking Management";
+}
+
+<h1>Booking Management</h1>
+
+<div class="row mb-3">
+    <div class="col-md-6">
+        <form method="get" class="form-inline">
+            <div class="input-group">
+                <select name="searchType" class="form-control">
+                    <option value="bookingId">Booking ID</option>
+                    <option value="eventName">Event Name</option>
+                </select>
+                <input type="text" name="searchString" class="form-control" placeholder="Search...">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Booking ID</th>
+                <th>Event Name</th>
+                <th>Venue</th>
+                <th>Booking Date</th>
+                <th>User ID</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.BookingId</td>
+                    <td>@item.EventName</td>
+                    <td>@item.VenueName</td>
+                    <td>@item.BookingDate.ToString("d")</td>
+                    <td>@item.UserId</td>
+                    <td>
+                        <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#detailsModal@(item.BookingId)">
+                            Details
+                        </button>
+                    </td>
+                </tr>
+
+                <!-- Details Modal for each booking -->
+                <div class="modal fade" id="detailsModal@(item.BookingId)" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Booking Details</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <dl class="row">
+                                    <dt class="col-sm-4">Event</dt>
+                                    <dd class="col-sm-8">@item.EventName</dd>
+
+                                    <dt class="col-sm-4">Event Date</dt>
+                                    <dd class="col-sm-8">@item.EventDate.ToString("d")</dd>
+
+                                    <dt class="col-sm-4">Venue</dt>
+                                    <dd class="col-sm-8">@item.VenueName</dd>
+
+                                    <dt class="col-sm-4">Location</dt>
+                                    <dd class="col-sm-8">@item.VenueLocation</dd>
+
+                                    <dt class="col-sm-4">Capacity</dt>
+                                    <dd class="col-sm-8">@item.VenueCapacity</dd>
+
+                                    @if (!string.IsNullOrEmpty(item.EventDescription))
+                                    {
+                                        <dt class="col-sm-4">Description</dt>
+                                        <dd class="col-sm-8">@item.EventDescription</dd>
+                                    }
+                                </dl>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </tbody>
+    </table>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        No bookings found.
+    </div>
+}
