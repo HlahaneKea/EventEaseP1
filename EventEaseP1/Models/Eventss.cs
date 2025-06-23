@@ -28,6 +28,13 @@ public partial class Eventss
     [Column("VenueID")]
     public int VenueId { get; set; }
 
+    [Required(ErrorMessage = "Event type is required")]
+    [Column("EventTypeId")]
+    public int EventTypeId { get; set; }
+
+    [ForeignKey("EventTypeId")]
+    public virtual EventType EventType { get; set; } = null!;
+
     [Column("Description")]
     public string? Description { get; set; }
 
@@ -38,7 +45,7 @@ public partial class Eventss
     public virtual Venue Venue { get; set; } = null!;
 
     [NotMapped]
-    public IFormFile ImageFile { get; set; }
+    public IFormFile? ImageFile { get; set; }
 
 
     public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();

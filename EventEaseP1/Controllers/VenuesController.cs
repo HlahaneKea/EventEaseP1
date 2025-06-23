@@ -65,7 +65,7 @@ namespace EventEaseP1.Controllers
         // POST: Venues/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Location,Capacity,ImageFile")] Venue venue)
+        public async Task<IActionResult> Create([Bind("Name,Location,Capacity,ImageFile,IsAvailable")] Venue venue)
         {
             try
             {
@@ -115,7 +115,7 @@ namespace EventEaseP1.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("VenueId,Name,Location,Capacity,ImageUrl")] Venue venue)
+        public async Task<IActionResult> Edit(int id, [Bind("VenueId,Name,Location,Capacity,ImageUrl,IsAvailable")] Venue venue)
         {
             if (id != venue.VenueId)
             {

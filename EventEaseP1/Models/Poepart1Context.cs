@@ -21,6 +21,8 @@ public partial class Poepart1Context : DbContext
 
     public virtual DbSet<Venue> Venues { get; set; }
 
+    public virtual DbSet<EventType> EventTypes { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         // Configuration is handled through dependency injection in Program.cs
@@ -49,7 +51,12 @@ public partial class Poepart1Context : DbContext
             entity.HasOne(d => d.Venue).WithMany(p => p.Eventsses)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Eventss__VenueID__398D8EEE");
-        });
+            entity.HasOne(d => d.EventType)
+         .WithMany(p => p.Events)
+         .OnDelete(DeleteBehavior.ClientSetNull)
+         .HasConstraintName("FK__Eventss__EventTypeId");
+        
+    });
 
         modelBuilder.Entity<Venue>(entity =>
         {

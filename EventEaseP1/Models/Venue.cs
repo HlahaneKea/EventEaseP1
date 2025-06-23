@@ -31,7 +31,9 @@ public partial class Venue
     public string? ImageUrl { get; set; }
 
     [NotMapped]
-    public IFormFile ImageFile { get; set; }
+    public IFormFile? ImageFile { get; set; }
+
+    public bool IsAvailable { get; set; } = true;
 
     public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
     public virtual ICollection<Eventss> Eventsses { get; set; } = new List<Eventss>();

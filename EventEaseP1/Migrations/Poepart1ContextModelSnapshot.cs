@@ -50,7 +50,7 @@ namespace EventEaseP1.Migrations
 
                     b.HasIndex("VenueId");
 
-                    b.ToTable("Bookings");
+                    b.ToTable("Bookings", (string)null);
                 });
 
             modelBuilder.Entity("EventEaseP1.Models.Eventss", b =>
@@ -63,33 +63,29 @@ namespace EventEaseP1.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EventId"));
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("Description");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
-                    b.Property<DateTime>("EventDate")
-                        .HasColumnType("date")
-                        .HasColumnName("EventDate");
+                    b.Property<DateOnly>("EventDate")
+                        .HasColumnType("date");
 
                     b.Property<string>("ImageUrl")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("ImageUrl");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)")
-                        .HasColumnName("Name");
+                        .HasColumnType("nvarchar(250)");
 
                     b.Property<int>("VenueId")
-                        .HasColumnType("int")
-                        .HasColumnName("VenueID");
+                        .HasColumnType("int");
 
                     b.HasKey("EventId")
                         .HasName("PK__Eventss__7944C87065698F4E");
 
                     b.HasIndex("VenueId");
 
-                    b.ToTable("Eventss");
+                    b.ToTable("Eventss", (string)null);
                 });
 
             modelBuilder.Entity("EventEaseP1.Models.Venue", b =>
@@ -102,22 +98,24 @@ namespace EventEaseP1.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ImageUrl")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("Location")
-                        .IsRequired()
                         .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(250)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(250)");
 
                     b.HasKey("VenueId")
                         .HasName("PK__Venues__3C57E5D2C536C794");
 
-                    b.ToTable("Venues");
+                    b.ToTable("Venues", (string)null);
                 });
 
             modelBuilder.Entity("EventEaseP1.Models.Booking", b =>

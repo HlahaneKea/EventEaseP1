@@ -22,6 +22,27 @@
 <p>
     <a asp-action="Create" class="btn btn-primary">Create New Event</a>
 </p>
+<form asp-action="Index" method="get" class="form-inline mb-3">
+    <div class="form-group mr-2">
+        <label for="eventTypeId" class="mr-2">Event Type</label>
+        <select id="eventTypeId" name="eventTypeId" class="form-control" asp-items="ViewBag.EventTypes">
+            <option value="">All</option>
+        </select>
+    </div>
+    <div class="form-group mr-2">
+        <label for="startDate" class="mr-2">Start Date</label>
+        <input type="date" id="startDate" name="startDate" class="form-control" />
+    </div>
+    <div class="form-group mr-2">
+        <label for="endDate" class="mr-2">End Date</label>
+        <input type="date" id="endDate" name="endDate" class="form-control" />
+    </div>
+    <div class="form-group mr-2">
+        <label class="mr-2">Only Available Venues</label>
+        <input type="checkbox" name="onlyAvailableVenues" value="true" />
+    </div>
+    <button type="submit" class="btn btn-info">Filter</button>
+</form>
 <table class="table">
     <thead>
         <tr>
@@ -30,7 +51,10 @@
             <th>Event Date</th>
             <th>Description</th>
             <th>Venue</th>
+            <th>Venue Available</th>
             <th>Actions</th>
+            <th>Event Type</th>
+           
         </tr>
     </thead>
     <tbody>
@@ -47,11 +71,13 @@
                 <td>@Html.DisplayFor(modelItem => item.EventDate)</td>
                 <td>@Html.DisplayFor(modelItem => item.Description)</td>
                 <td>@Html.DisplayFor(modelItem => item.Venue.Name)</td>
+                <td>@(item.Venue?.IsAvailable == true ? "Yes" : "No")</td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.EventId" class="btn btn-primary btn-sm">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.EventId" class="btn btn-info btn-sm">Details</a> |
                     <a asp-action="Delete" asp-route-id="@item.EventId" class="btn btn-danger btn-sm">Delete</a>
                 </td>
+                <td>@item.EventType?.Name</td>
             </tr>
         }
     </tbody>

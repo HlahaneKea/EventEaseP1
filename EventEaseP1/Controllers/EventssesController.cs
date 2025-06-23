@@ -32,10 +32,27 @@ namespace EventEaseP1.Controllers
 
 
         // GET: Eventsses
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? eventTypeId, DateTime? startDate, DateTime? endDate, bool? onlyAvailableVenues)
         {
-            var poepart1Context = _context.Eventsses.Include(e => e.Venue);
-            return View(await poepart1Context.ToListAsync());
+            var events = _context.Eventsses
+                .Include(e => e.EventType)
+                .Include(e => e.Venue)
+                .AsQueryable();
+
+            if (eventTypeId.HasValue)
+                events = events.Where(e => e.EventTypeId == eventTypeId.Value);
+
+            if (startDate.HasValue)
+                events = events.Where(e => e.EventDate >= startDate.Value);
+
+            if (endDate.HasValue)
+                events = events.Where(e => e.EventDate <= endDate.Value);
+
+            if (onlyAvailableVenues == true)
+                events = events.Where(e => e.Venue.IsAvailable);
+
+            ViewBag.EventTypes = new SelectList(_context.EventTypes.ToList(), "EventTypeId", "Name");
+            return View(await events.ToListAsync());
         }
 
         // GET: Eventsses/Details/5
@@ -63,12 +80,14 @@ namespace EventEaseP1.Controllers
         {
             try
             {
-                var venues = _context.Venues.ToList();
-                ViewBag.VenueList = venues.Select(v => new SelectListItem
-                {
-                    Value = v.VenueId.ToString(),
-                    Text = v.Name
-                });
+               // var venues = _context.Venues.ToList();
+               // ViewBag.VenueList = venues.Select(v => new SelectListItem
+               // {
+                  //  Value = v.VenueId.ToString(),
+                //    Text = v.Name
+             //   });
+                ViewBag.VenueList = new SelectList(_context.Venues, "VenueId", "Name");
+                ViewBag.EventTypes = new SelectList(_context.EventTypes, "EventTypeId", "Name");
                 return View();
             }
             catch (Exception ex)
@@ -81,7 +100,7 @@ namespace EventEaseP1.Controllers
         // POST: Eventsses/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,EventDate,VenueId,Description,ImageFile")] Eventss eventss)
+        public async Task<IActionResult> Create([Bind("Name,EventDate,VenueId,EventTypeId,Description,ImageFile")] Eventss eventss)
         {
             try
             {
@@ -104,11 +123,8 @@ namespace EventEaseP1.Controllers
                 ModelState.AddModelError("", "Error creating event. Please try again.");
             }
 
-            ViewBag.VenueList = _context.Venues.Select(v => new SelectListItem
-            {
-                Value = v.VenueId.ToString(),
-                Text = v.Name
-            });
+            ViewBag.VenueList = new SelectList(_context.Venues, "VenueId", "Name", eventss.VenueId);
+            ViewBag.EventTypes = new SelectList(_context.EventTypes, "EventTypeId", "Name", eventss.EventTypeId);
             return View(eventss);
         }
 
@@ -148,15 +164,17 @@ namespace EventEaseP1.Controllers
                 return NotFound();
             }
 
-            ViewBag.VenueId = new SelectList(_context.Venues, "VenueId", "Name", eventss.VenueId);
+            ViewBag.VenueList = new SelectList(_context.Venues, "VenueId", "Name", eventss.VenueId);
+            ViewBag.EventTypes = new SelectList(_context.EventTypes, "EventTypeId", "Name", eventss.EventTypeId);
             return View(eventss);
+        
         }
 
         // POST: Eventsses/Edit/5
         // POST: Eventsses/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("EventId,Name,EventDate,VenueId,Description,ImageUrl")] Eventss eventss, IFormFile imageFile)
+        public async Task<IActionResult> Edit(int id, [Bind("EventId,Name,EventDate,VenueId,EventTypeId,Description,ImageUrl")] Eventss eventss, IFormFile imageFile)
         {
             if (id != eventss.EventId)
             {
@@ -194,7 +212,8 @@ namespace EventEaseP1.Controllers
                     }
                 }
             }
-            ViewData["VenueId"] = new SelectList(_context.Venues, "VenueId", "Name", eventss.VenueId);
+            ViewBag.VenueList = new SelectList(_context.Venues, "VenueId", "Name", eventss.VenueId);
+            ViewBag.EventTypes = new SelectList(_context.EventTypes, "EventTypeId", "Name", eventss.EventTypeId);
             return View(eventss);
         }
 
